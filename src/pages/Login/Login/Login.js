@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../contexts/AuthProvider/AuthProvider";
 
 const Login = () => {
+  const [error, setError] = useState('')
   const {logIn} = useContext(AuthContext)
   const navigate = useNavigate()
 
@@ -18,11 +19,14 @@ const Login = () => {
     .then(res => {
       const user = res.user;
       form.reset()
+      setError('')
       navigate('/')
       console.log(user)
     })
-    .catch(err => console.error(err))
-    console.log(email, password)
+    .catch(err => {
+      console.error(err)
+      setError(err.message)
+    })
   }
   return (
     <Form onSubmit={handleSubmit}>
@@ -38,7 +42,9 @@ const Login = () => {
       <Button variant="primary" type="submit">
         Log In
       </Button>
-      <Form.Text className="text-muted"></Form.Text>
+      <Form.Text className="text-muted text-danger">
+        {error}
+      </Form.Text>
     </Form>
   );
 };
