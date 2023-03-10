@@ -1,18 +1,38 @@
-import React, { useContext } from 'react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
-import LeftSideNav from '../LeftSideNav/LeftSideNav';
+import React, { useContext } from "react";
+import { Image } from "react-bootstrap";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { FaUser } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../../../contexts/AuthProvider/AuthProvider";
+import LeftSideNav from "../LeftSideNav/LeftSideNav";
+import Button from 'react-bootstrap/Button';
+
 
 const Header = () => {
-  const {user} = useContext(AuthContext)
+  const { user, logOut } = useContext(AuthContext);
+  console.log(user);
+
+  const handleLogOut = () => {
+    logOut()
+    .then(() => {})
+    .catch(err => console.error(err))
+  }
   return (
-    <Navbar className='mb-4' collapseOnSelect expand="lg" bg="light" variant="light">
+    <Navbar
+      className="mb-4"
+      collapseOnSelect
+      expand="lg"
+      bg="light"
+      variant="light"
+    >
       <Container>
-        <Navbar.Brand href="#home"> <Link to={'/'}>Dragon News</Link> </Navbar.Brand>
+        <Navbar.Brand href="#home">
+          {" "}
+          <Link to={"/"}>Dragon News</Link>{" "}
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
@@ -31,13 +51,35 @@ const Header = () => {
             </NavDropdown>
           </Nav>
           <Nav>
-            <Nav.Link href="#deets">{user.displayName}</Nav.Link>
+            <Nav.Link href="#deets">
+              {
+                user?.uid ? 
+                <>
+                <span>{user?.displayName}</span>
+                <Button onClick={handleLogOut} variant="light">Logout</Button>
+                </>
+                 : 
+                 <>
+                 <Button variant="light"> <Link to={'/login'}>Login</Link></Button>
+                 <Button variant="light"> <Link to={'/register'}>Register</Link></Button>
+                 </>
+
+              }
+            </Nav.Link>
             <Nav.Link eventKey={2} href="#memes">
-              Dank memes
+              {user?.photoURL ? (
+                <Image
+                  roundedCircle
+                  src={user?.photoURL}
+                  style={{ height: "30px" }}
+                ></Image>
+              ) : (
+                <FaUser></FaUser>
+              )}
             </Nav.Link>
           </Nav>
-          <div className='d-lg-none'>
-          <LeftSideNav></LeftSideNav>
+          <div className="d-lg-none">
+            <LeftSideNav></LeftSideNav>
           </div>
         </Navbar.Collapse>
       </Container>
